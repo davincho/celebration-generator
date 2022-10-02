@@ -44,11 +44,11 @@ const start = async () => {
 
   const outputLocation = `out/${compositionId}.mp4`;
   console.log("Attempting to render:", outputLocation);
-  await renderMedia({
+  return await renderMedia({
     composition,
     serveUrl: bundleLocation,
-    codec: "h264",
-    outputLocation,
+    codec: "gif",
+    // outputLocation,
     inputProps,
   });
   console.log("Render done!");
@@ -64,7 +64,7 @@ export default function handler(
 
   start().then((r) => {
     console.log('RESLLLLT', r)
-    res.status(200).json({ name: 'John Doe' })
+    res.status(200).end(r)
   })
 
 

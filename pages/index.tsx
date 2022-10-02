@@ -9,7 +9,7 @@ const Home: NextPage = () => {
     <>
       <Player
         component={MyComposition}
-        durationInFrames={120}
+        durationInFrames={30}
         compositionWidth={600}
         compositionHeight={400}
         fps={30}

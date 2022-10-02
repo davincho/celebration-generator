@@ -38,10 +38,10 @@ export const MyVideo = () => {
   return (
     <Composition
       id="MyComposition"
-      durationInFrames={150}
+      durationInFrames={30}
       fps={30}
-      width={1920}
-      height={1080}
+      width={600}
+      height={400}
       component={MyComposition}
     />
   );
