@@ -14,7 +14,7 @@ const start = async () => {
   const compositionId = "MyComposition";
 
   // You only have to do this once, you can reuse the bundle.
-  const entry = "./pages/Video";
+  const entry = "./components/remotion-index.tsx";
   console.log("Creating a Webpack bundle of the video", path.resolve(entry));
   const bundleLocation = await bundle(path.resolve(entry), (perc) => {
     console.log('Progress: ' + perc)
@@ -24,6 +24,8 @@ const start = async () => {
   const inputProps = {
     foo: "bar",
   };
+
+  console.log('Done with bundle here: ', bundleLocation)
 
   // Extract all the compositions you have defined in your project
   // from the webpack bundle.

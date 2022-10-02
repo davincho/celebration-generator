@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 
 import { Player } from "@remotion/player";
 
-import { MyComposition } from "./Video";
+import { MyComposition } from "./../components/Video";
 
 const Home: NextPage = () => {
   return (
@@ -13,6 +13,7 @@ const Home: NextPage = () => {
         compositionWidth={600}
         compositionHeight={400}
         fps={30}
+        autoPlay
       />
       <button
         onClick={() => {

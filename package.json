@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "remotion:preview": "remotion preview components/remotion-index.tsx",
+    "remotion:render": "remotion render components/remotion-index.tsx MyComposition out/viech.mp4",
     "lint": "next lint"
   },
   "dependencies": {
     "@remotion/bundler": "^3.2.25",
+    "@remotion/cli": "^3.2.25",
     "@remotion/player": "^3.2.25",
     "@remotion/renderer": "^3.2.25",
     "js-confetti": "^0.10.2",

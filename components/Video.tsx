@@ -46,3 +46,5 @@ export const MyVideo = () => {
     />
   );
 };
+
+export default MyVideo;
