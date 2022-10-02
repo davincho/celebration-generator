@@ -1,8 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-require('chrome-aws-lambda')
-
 import path from "path";
 
 import { getCompositions, renderMedia } from "@remotion/renderer";
