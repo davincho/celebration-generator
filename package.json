@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run prepare && next build",
     "start": "next start",
     "remotion:preview": "remotion preview components/remotion-index.tsx",
     "remotion:render": "remotion render components/remotion-index.tsx MyComposition out/viech.mp4",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare:watch": "npm run prepare --watch --onSuccess 'node dist/prepare.js'",
+    "prepare": "tsup prepare.ts --onSuccess 'node dist/prepare.js'"
   },
   "dependencies": {
     "@remotion/bundler": "^3.2.25",
@@ -27,6 +29,7 @@
     "@types/react-dom": "18.0.6",
     "eslint": "8.24.0",
     "eslint-config-next": "12.3.1",
+    "tsup": "^6.2.3",
     "typescript": "4.8.4"
   }
 }

@@ -6,7 +6,7 @@ type Data = {
 }
 
 import path from "path";
-import { bundle } from "@remotion/bundler";
+
 import { getCompositions, renderMedia } from "@remotion/renderer";
 
 const start = async () => {
@@ -16,20 +16,19 @@ const start = async () => {
   // You only have to do this once, you can reuse the bundle.
   const entry = "./components/remotion-index.tsx";
   console.log("Creating a Webpack bundle of the video", path.resolve(entry));
-  const bundleLocation = await bundle(path.resolve(entry), (perc) => {
-    console.log('Progress: ' + perc)
-  });
+
 
   // Parametrize the video by passing arbitrary props to your component.
   const inputProps = {
     foo: "bar",
   };
 
+  const bundleLocation = './public/video'
   console.log('Done with bundle here: ', bundleLocation)
 
   // Extract all the compositions you have defined in your project
   // from the webpack bundle.
-  const comps = await getCompositions(bundleLocation, {
+  const comps = await getCompositions('./public/video/', {
     // You can pass custom input props that you can retrieve using getInputProps()
     // in the composition list. Use this if you want to dynamically set the duration or
     // dimensions of the video.
