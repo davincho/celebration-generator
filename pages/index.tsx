@@ -1,19 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 
-import { Button, Input, Box } from "@chakra-ui/react";
+import { Button, Input, Checkbox } from "@chakra-ui/react";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import confetti from "canvas-confetti";
 import canvasTxt from "canvas-txt";
+import JSConfetti from "js-confetti";
 import type { NextPage } from "next";
 
 import Canvas from "./../components/Canvas";
+import CanvasRecorder from "./../components/CanvasRecorder";
+import { HEIGHT, PADDING, WIDTH } from "./../components/const";
 
 let recordedChunks = [];
-
-const WIDTH = 600;
-const HEIGHT = 400;
-
-const PADDING = 100;
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,7 +22,6 @@ const Home: NextPage = () => {
   const mediaRecorderRef = useRef<MediaRecorder>();
 
   const [isRecording, setIsRecording] = useState(false);
-  const recorderRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,107 +38,61 @@ const Home: NextPage = () => {
       mediaRecorderRef.current = new MediaRecorder(stream, {
         mimeType: "video/webm;codecs=vp9",
       });
-
-      // videoRef.current.srcObject = stream;
-
-      canvas.confetti =
-        canvas.confetti || confetti.create(canvas, { resize: true });
-
-      const ctx = resultCanvas.getContext("2d");
-
-      const anim = () => {
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(textCanvas, 0, 0);
-        ctx.drawImage(canvas, 0, 0);
-        requestAnimationFrame(anim);
-      };
-      anim();
     }
   }, []);
 
+  const updateText: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const canvas = textCanvasRef.current;
+
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+
+      const txt = event.target.value;
+
+      canvasTxt.fontSize = 80;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "black";
+
+      canvasTxt.drawText(
+        ctx,
+        txt,
+        PADDING,
+        PADDING,
+        WIDTH - 2 * PADDING,
+        HEIGHT - 2 * PADDING
+      );
+    }
+  };
+
   return (
     <>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
+      <Input
+        onChange={updateText}
+        name="title"
+        defaultValue="🌟 30k stargazers 🌟"
+        placeholder="Title"
+      />
 
-          const canvas = textCanvasRef.current;
-
-          if (canvas) {
-            const ctx = canvas.getContext("2d");
-
-            const txt = event.target.title.value;
-
-            console.log(ctx);
-            canvasTxt.fontSize = 24;
-
-            canvasTxt.drawText(
-              ctx,
-              txt,
-              PADDING,
-              PADDING,
-              WIDTH - PADDING,
-              HEIGHT - PADDING
-            );
-          }
-        }}
-      >
-        <Input
-          name="title"
-          defaultValue="🌟 30k stargazers 🌟"
-          placeholder="Title"
-        />
-        <Button type="submit">Add</Button>
-      </form>
+      <Checkbox>With Confetti</Checkbox>
       <Button
         onClick={() => {
-          canvasRef.current.confetti({
-            spread: 70,
-            origin: { y: 1.2 },
+          const jsConfetti = new JSConfetti({ canvas: canvasRef.current });
+
+          jsConfetti.addConfetti({
+            emojis: ["⚡️", "💥", "✨"],
           });
         }}
       >
         Confetti
       </Button>
-      <Box position="relative" display="flex">
-        <Canvas />
-        <canvas
-          style={{
-            display: "none",
-            backgroundColor: "red",
-            top: 0,
-            height: HEIGHT / 2,
-            width: WIDTH / 2,
-          }}
-          ref={textCanvasRef}
-          width={WIDTH}
-          height={HEIGHT}
-        />
-        <canvas
-          style={{
-            position: "absolute",
-            top: -99_999,
-            left: -99_999,
-            height: HEIGHT,
-            width: WIDTH,
-            backgroundColor: "green",
-          }}
-          ref={canvasRef}
-          width={WIDTH}
-          height={HEIGHT}
-        />
-      </Box>
-      <canvas
+
+      <Canvas ref={canvasRef} />
+      <Canvas ref={textCanvasRef} />
+
+      <CanvasRecorder
+        sources={[textCanvasRef, canvasRef]}
         ref={resultCanvasRef}
-        width={WIDTH}
-        height={HEIGHT}
-        style={{
-          top: 0,
-          height: HEIGHT,
-          width: WIDTH,
-          backgroundColor: "blue",
-        }}
       />
 
       <Button
@@ -154,23 +104,26 @@ const Home: NextPage = () => {
 
           if (mediaRecorder) {
             recordedChunks = [];
-            mediaRecorder.ondataavailable = (e) => {
-              console.log("DATA available");
-              if (e.data.size > 0) {
-                recordedChunks.push(e.data);
+            mediaRecorder.addEventListener("dataavailable", (event) => {
+              if (event.data.size > 0) {
+                recordedChunks.push(event.data);
               }
-            };
-            mediaRecorder.onerror = (e) => {
-              console.error("Nooo", e);
-            };
+            });
+            mediaRecorder.addEventListener("error", (event) => {
+              // eslint-disable-next-line no-console
+              console.error("Got and error while recording:", event);
+            });
             mediaRecorder.start();
+
+            setIsRecording(true);
           }
         }}
       >
-        Start recording
+        {isRecording ? "Recording ..." : "Start recording"}
       </Button>
       <button
         onClick={async () => {
+          setIsRecording(false);
           const mediaRecorder = mediaRecorderRef.current;
 
           if (mediaRecorder) {
@@ -179,7 +132,6 @@ const Home: NextPage = () => {
             const ffmpeg = createFFmpeg({
               corePath:
                 "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
-              log: true,
             });
 
             await ffmpeg.load();
@@ -218,11 +170,13 @@ const Home: NextPage = () => {
       >
         Stop recording
       </button>
+
       <video
         style={{
           height: HEIGHT,
           width: WIDTH,
         }}
+        loop
         autoPlay
         controls
         ref={videoRef}

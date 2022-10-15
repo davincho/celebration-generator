@@ -1,17 +1,16 @@
 import * as React from "react";
 
-const WIDTH = 600;
-const HEIGHT = 400;
+import { HEIGHT, WIDTH } from "./const";
 
-const Canvas = React.forwardRef<HTMLCanvasElement, {}>((_, ref) => {
+const Canvas = React.forwardRef<HTMLCanvasElement>((_, ref) => {
   return (
     <canvas
       style={{
         position: "absolute",
         top: -99_999,
         left: -99_999,
-        height: HEIGHT / 2,
-        width: WIDTH / 2,
+        height: HEIGHT,
+        width: WIDTH,
       }}
       ref={ref}
       width={WIDTH}
