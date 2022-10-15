@@ -7,24 +7,25 @@ const CanvasRecorder = React.forwardRef<
   { sources: React.RefObject<HTMLCanvasElement>[] }
 >(({ sources }, ref) => {
   React.useEffect(() => {
-    const canvas = ref?.current;
+    if (typeof ref !== "function") {
+      const canvas = ref?.current;
+      const ctx = canvas?.getContext("2d");
 
-    if (ref) {
-      const ctx = canvas.getContext("2d");
+      if (canvas && ctx) {
+        const anim = () => {
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const anim = () => {
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+          sources.map((source) => {
+            if (source.current) {
+              ctx.drawImage(source.current, 0, 0, canvas.width, canvas.height);
+            }
+          });
 
-        sources.map((source) => {
-          if (source.current) {
-            ctx.drawImage(source.current, 0, 0, canvas.width, canvas.height);
-          }
-        });
-
-        requestAnimationFrame(anim);
-      };
-      anim();
+          requestAnimationFrame(anim);
+        };
+        anim();
+      }
     }
   }, [sources, ref]);
 

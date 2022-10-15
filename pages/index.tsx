@@ -10,7 +10,7 @@ import Canvas from "./../components/Canvas";
 import CanvasRecorder from "./../components/CanvasRecorder";
 import { HEIGHT, PADDING, WIDTH } from "./../components/const";
 
-let recordedChunks = [];
+let recordedChunks: Blob[] = [];
 
 const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,9 +44,9 @@ const Home: NextPage = () => {
   const updateText: ChangeEventHandler<HTMLInputElement> = (event) => {
     const canvas = textCanvasRef.current;
 
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
+    const ctx = canvas?.getContext("2d");
 
+    if (canvas && ctx) {
       const txt = event.target.value;
 
       canvasTxt.fontSize = 80;
@@ -77,11 +77,13 @@ const Home: NextPage = () => {
       <Checkbox>With Confetti</Checkbox>
       <Button
         onClick={() => {
-          const jsConfetti = new JSConfetti({ canvas: canvasRef.current });
+          if (canvasRef.current) {
+            const jsConfetti = new JSConfetti({ canvas: canvasRef.current });
 
-          jsConfetti.addConfetti({
-            emojis: ["⚡️", "💥", "✨"],
-          });
+            jsConfetti.addConfetti({
+              emojis: ["⚡️", "💥", "✨"],
+            });
+          }
         }}
       >
         Confetti
