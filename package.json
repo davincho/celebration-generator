@@ -4,31 +4,35 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run prepare && next build",
+    "build": "next build",
     "start": "next start",
     "remotion:preview": "remotion preview components/remotion-index.tsx",
-    "remotion:render": "remotion render components/remotion-index.tsx MyComposition out/viech.mp4",
-    "lint": "next lint",
-    "prepare:watch": "npm run prepare --watch --onSuccess 'node dist/prepare.js'",
-    "prepare": "tsup prepare.ts --onSuccess 'node dist/prepare.js'"
+    "remotion:render": "remotion render components/remotion-index.tsx MyComposition out/viech.mp4 --disable-headless",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@remotion/bundler": "^3.2.25",
-    "@remotion/cli": "^3.2.25",
-    "@remotion/player": "^3.2.25",
-    "@remotion/renderer": "^3.2.25",
-    "js-confetti": "^0.10.2",
+    "@chakra-ui/react": "^2.3.4",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@ffmpeg/core": "^0.11.0",
+    "@ffmpeg/ffmpeg": "^0.11.5",
+    "canvas-confetti": "^1.5.1",
+    "canvas-txt": "^3.0.0",
+    "framer-motion": "^7.5.1",
+    "html2canvas": "^1.4.1",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "remotion": "^3.2.25"
+    "recordrtc": "^5.6.2"
   },
   "devDependencies": {
+    "@dvnch/eslint-config": "^3.1.1",
     "@types/node": "18.7.23",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
     "eslint": "8.24.0",
     "eslint-config-next": "12.3.1",
+    "prettier": "^2.7.1",
     "tsup": "^6.2.3",
     "typescript": "4.8.4"
   }
