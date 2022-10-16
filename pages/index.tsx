@@ -27,7 +27,7 @@ const Home: NextPage = () => {
 
   const [recorderState, setRecorderState] = useState<
     "idle" | "reording" | "processing" | "finished"
-  >("finished");
+  >("idle");
 
   useEffect(() => {
     const canvas = canvasRef.current;
