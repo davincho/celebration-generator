@@ -184,7 +184,7 @@ const Home: NextPage = () => {
 
             fireConfetti();
 
-            await waitSomeTime(1000);
+            await waitSomeTime(4000);
 
             setRecorderState("processing");
 
