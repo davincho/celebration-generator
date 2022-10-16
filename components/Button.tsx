@@ -7,7 +7,7 @@ const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
   return (
     <button
       {...props}
-      className="rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer p-1"
+      className="rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer p-2 block"
     >
       {children}
     </button>

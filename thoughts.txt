@@ -1,3 +1,5 @@
 Write about react remotion
 ffmpeg as WASM for converting
 challenge to record multiple canvas at the same time (adding the stream from one to another)
+
+leveraging usesyncexternal store for reading the hash value, objects should be cached otherwise infinite loop :)

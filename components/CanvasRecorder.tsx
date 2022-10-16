@@ -35,6 +35,9 @@ const CanvasRecorder = React.forwardRef<
       width={WIDTH}
       height={HEIGHT}
       style={{
+        // position: "absolute",
+        // top: -99_999,
+        // left: -99_999,
         top: 0,
         height: HEIGHT,
         width: WIDTH,
