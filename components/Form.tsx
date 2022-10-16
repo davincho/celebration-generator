@@ -74,9 +74,12 @@ const Form = ({
           Reset form
         </Button>
 
-        <div className="bg-gray-300 p-2 my-2">
+        <div className="my-4">
           {formState.isSubmitting ? (
-            <Button type="button">Stop Recording</Button>
+            <span className="relative inline-flex">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <div>Recording</div>
+            </span>
           ) : (
             <Button type="submit">Start Recording</Button>
           )}

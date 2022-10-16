@@ -31,13 +31,11 @@ const CanvasRecorder = React.forwardRef<
 
   return (
     <canvas
+      className="shadow-lg shadow-gray-500/50 rounded-lg"
       ref={ref}
       width={WIDTH}
       height={HEIGHT}
       style={{
-        // position: "absolute",
-        // top: -99_999,
-        // left: -99_999,
         top: 0,
         height: HEIGHT,
         width: WIDTH,

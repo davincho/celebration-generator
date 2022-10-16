@@ -90,7 +90,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="grid grid-flow-col gap-1 w-screen h-screen grid-cols-[1fr_min(200px,_1fr)]">
-      <div className="flex items-center">
+      <div className="flex items-center justify-center">
         <Canvas ref={canvasRef} />
         <Canvas ref={textCanvasRef} />
 
@@ -154,12 +154,14 @@ const Home: NextPage = () => {
               fireConfetti();
             }
           }}
-          onSubmit={async () => {
+          onSubmit={async (data: any) => {
             // eslint-disable-next-line unicorn/consistent-function-scoping
             const waitSomeTime = async (time: number) =>
               new Promise((resolve) => {
                 setTimeout(resolve, time);
               });
+
+            updateText(data.message, data.font);
 
             // Start recording
             const mediaRecorder = mediaRecorderRef.current;
