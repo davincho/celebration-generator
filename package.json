@@ -6,8 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "remotion:preview": "remotion preview components/remotion-index.tsx",
-    "remotion:render": "remotion render components/remotion-index.tsx MyComposition out/viech.mp4 --disable-headless",
     "lint": "next lint"
   },
   "dependencies": {
