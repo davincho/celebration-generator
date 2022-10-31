@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useState, useMemo, useRef } from "react";
 
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { useMachine } from "@xstate/react";
@@ -22,6 +22,7 @@ const Home: NextPage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const textCanvasRef = useRef<HTMLCanvasElement>(null);
   const resultCanvasRef = useRef<HTMLCanvasElement>(null);
+  const logOutputRef = useRef<HTMLDivElement>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -197,6 +198,15 @@ const Home: NextPage = () => {
     });
 
     ffmpeg.setLogging(true);
+    ffmpeg.setLogger((log) => {
+      const outputDiv = logOutputRef.current;
+
+      if (!outputDiv) {
+        return;
+      }
+
+      outputDiv.textContent = outputDiv.textContent + log.message;
+    });
 
     await ffmpeg.load();
 
@@ -249,7 +259,13 @@ const Home: NextPage = () => {
             className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center backdrop-blur-sm"
           >
             {isProcessing && (
-              <h2 className="text-6xl animate-bounce">... processing ...</h2>
+              <>
+                <h2 className="text-6xl animate-bounce">... processing ...</h2>
+                <div
+                  ref={logOutputRef}
+                  className="bg-black text-white font-mono h-96 w-32 overflow-auto"
+                ></div>
+              </>
             )}
 
             <div className="flex flex-col">
