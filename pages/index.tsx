@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import { useMachine } from "@xstate/react";
@@ -27,8 +27,6 @@ const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const updateText = (txt: string, font = "monospace") => {
-    console.log("Updating text with", txt);
-
     if (!txt) {
       return;
     }
