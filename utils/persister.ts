@@ -7,11 +7,11 @@ export const decode = (hash: string) => {
   const currentVal = decompressFromEncodedURIComponent(hash);
 
   try {
-    return currentVal ? JSON.parse(currentVal) : {};
+    return currentVal ? JSON.parse(currentVal) : undefined;
   } catch {
     // eslint-disable-next-line no-console
     console.error("Could not read config from hash");
-    return {};
+    return;
   }
 };
 
@@ -35,6 +35,10 @@ export const encode = (values: object) => {
 export const read = () => decode(location.hash.slice(1));
 
 export const write = (values: object) => {
+  if (Object.keys(values).length === 0) {
+    return;
+  }
+
   const newHash = encode(values);
   location.hash = `#${newHash}`;
 };

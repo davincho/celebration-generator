@@ -22,7 +22,11 @@ const Form = ({
     }
   );
 
-  const defaultValues = decode(locationHash);
+  const defaultValues = decode(locationHash) ?? {
+    message: "🌟 30k stargazers 🌟",
+    font: "sans-serif",
+    rounds: "2",
+  };
 
   const methods = useForm({ defaultValues });
   const { register, handleSubmit, reset, watch, formState } = methods;
@@ -43,46 +47,53 @@ const Form = ({
         <label className="block">
           Your message
           <input
-            className="block rounded-lg"
+            className="block rounded-lg w-full"
             type="text"
-            placeholder="🌟 30k stargazers 🌟"
             {...register("message")}
           />
         </label>
         <label className="block">
           Font
-          <select className="block" {...register("font")}>
+          <select className="block w-full" {...register("font")}>
             <option value="sans-serif">SanSerif</option>
             <option value="monospace">Monospace</option>
           </select>
         </label>
-        <label className="cursor-pointer">
-          <input type="checkbox" className="mr-2" {...register("confetti")} />
-          with Confetti
+
+        <label className="flex" htmlFor="rounds">
+          Confetti Rounds
         </label>
-        {/* <label className="block">
-          Length (sec)
-          <input type="number" className="block" min={1} max={4} />
-        </label> */}
+        <input
+          className="w-full"
+          id="rounds"
+          type="range"
+          step="1"
+          min="0"
+          max="4"
+          list="roundmarks"
+          {...register("rounds")}
+        />
 
-        <Button
-          type="button"
-          onClick={() => {
-            reset({});
-          }}
-        >
-          Reset form
-        </Button>
+        <datalist id="roundmarks" className="flex justify-between">
+          <option value="0" label="🤨"></option>
+          <option value="1" label="🥱"></option>
+          <option value="2" label="🥳"></option>
+          <option value="3" label="🤩"></option>
+          <option value="4" label="🦄"></option>
+        </datalist>
 
-        <div className="my-4">
-          {formState.isSubmitting ? (
-            <span className="relative inline-flex">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <div>Recording</div>
-            </span>
-          ) : (
-            <Button type="submit">Start Recording</Button>
-          )}
+        <div className="my-4 flex justify-between">
+          <Button variant="primary" type="submit">
+            Start Recording
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              reset();
+            }}
+          >
+            Reset form
+          </Button>
         </div>
       </form>
     </FormProvider>

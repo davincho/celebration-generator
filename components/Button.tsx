@@ -1,13 +1,23 @@
 import { ButtonHTMLAttributes } from "react";
 
-const Button: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = ({
+const variants = {
+  primary: "bg-green-200 text-green-900 hover:bg-green-300",
+  default: "bg-white border-gray-200 border-2 hover:border-gray-400",
+};
+
+interface Props {
+  variant?: keyof typeof variants;
+}
+
+const Button: React.FC<Props & ButtonHTMLAttributes<HTMLButtonElement>> = ({
   children,
+  variant = "default",
   ...props
 }) => {
   return (
     <button
       {...props}
-      className="rounded-lg bg-gray-200 hover:bg-gray-300 cursor-pointer p-2 block"
+      className={`rounded-lg cursor-pointer p-2 block ${variants[variant]}`}
     >
       {children}
     </button>
