@@ -138,7 +138,7 @@ const Home: NextPage = () => {
     [textCanvasRef, canvasRef1, canvasRef2, canvasRef3, canvasRef4]
   );
 
-  const startRecording = async (rounds: number) => {
+  const startRecording = async (rounds: number, emojis?: string[]) => {
     // eslint-disable-next-line unicorn/consistent-function-scoping
     const waitSomeTime = async (time: number) =>
       new Promise((resolve) => {
@@ -157,6 +157,7 @@ const Home: NextPage = () => {
     const resultCanvasStream = resultCanvas.captureStream(30);
     const mediaRecorder = new MediaRecorder(resultCanvasStream, {
       mimeType: "video/webm;codecs=vp9",
+      bitsPerSecond: 240_000_000,
     });
 
     const recordedChunks: Blob[] = [];
@@ -175,7 +176,7 @@ const Home: NextPage = () => {
     const interval = clipLength / rounds;
 
     for (let i = 0; i < rounds; i++) {
-      fireConfetti(i + 1);
+      fireConfetti(i + 1, emojis);
       await waitSomeTime(interval);
     }
 
@@ -319,7 +320,7 @@ const Home: NextPage = () => {
             }
 
             if (data.confetti_type === "confetti") {
-              fireConfetti(0);
+              fireConfetti(1);
             } else {
               // Collect emojis
               const emojis = Object.keys(data.emojis ?? {}).filter(
@@ -330,25 +331,13 @@ const Home: NextPage = () => {
             }
           }}
           onSubmit={async (data: any) => {
-            updateText(data.message, data.font);
+            const emojis = Object.keys(data.emojis ?? {}).filter(
+              (key) => data.emojis[key]
+            );
 
-            startRecording(Number.parseInt(data.rounds, 10));
+            startRecording(Number.parseInt(data.rounds, 10), emojis);
           }}
         />
-        <button
-          onClick={() => {
-            fireConfetti(1);
-          }}
-        >
-          Draw on canvas 0
-        </button>
-        <button
-          onClick={() => {
-            fireConfetti(2);
-          }}
-        >
-          Draw on canvas 1
-        </button>
       </div>
     </div>
   );
