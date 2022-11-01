@@ -54,14 +54,15 @@ const Home: NextPage = () => {
     }
   };
 
-  const fireConfetti = () => {
+  // ["⚡️", "💥", "✨"]
+  const fireConfetti = (emojis?: string[]) => {
     if (canvasRef.current) {
       const jsConfetti = new JSConfetti({
         canvas: canvasRef.current,
       });
 
       jsConfetti.addConfetti({
-        emojis: ["⚡️", "💥", "✨"],
+        emojis,
       });
     }
   };
@@ -93,18 +94,11 @@ const Home: NextPage = () => {
       {
         predictableActionArguments: true,
         id: "recorder",
-        initial: "welcome",
+        initial: "editing",
         context: {
           retries: 0,
         },
         states: {
-          idle: {},
-          welcome: {
-            after: {
-              // after 1 second, transition to yellow
-              1000: { target: "editing", actions: ["fire"] },
-            },
-          },
           editing: {
             on: {
               RESET: "editing",
@@ -303,8 +297,37 @@ const Home: NextPage = () => {
 
       <div className="bg-blue-50 p-4">
         <DynamicForm
-          onDataChanged={(data: any) => {
-            updateText(data.message, data.font);
+          onDataChanged={(data: any, { name, type }) => {
+            if (!name) {
+              return;
+            }
+
+            if (["message", "font"].includes(name)) {
+              updateText(data.message, data.font);
+            }
+
+            const rounds = Number.parseInt(data.rounds, 10);
+
+            const shouldFireConfetti =
+              (name.startsWith("emojis") ||
+                ["confetti_type", "rounds"].includes(name)) &&
+              rounds > 0;
+
+            if (!shouldFireConfetti) {
+              return;
+            }
+
+            if (data.confetti_type === "confetti") {
+              fireConfetti();
+            } else {
+              // Collect emoti
+
+              const emojis = Object.keys(data.emojis ?? {}).filter(
+                (key) => data.emojis[key]
+              );
+
+              fireConfetti(emojis);
+            }
           }}
           onSubmit={async (data: any) => {
             updateText(data.message, data.font);

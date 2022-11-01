@@ -5,14 +5,20 @@ import { useForm, FormProvider } from "react-hook-form";
 import { decode } from "../utils/persister";
 
 import Button from "./../components/Button";
+import Label from "./../components/Label";
 import Persister from "./../components/Persister";
+
+const EMOJIS = ["🦄", "🐸", "🌟", "🤩"];
 
 const Form = ({
   onSubmit,
   onDataChanged,
 }: {
   onSubmit: (data: object) => Promise<void>;
-  onDataChanged: (data: object) => void;
+  onDataChanged: (
+    data: unknown,
+    change: { name?: string; type?: string }
+  ) => void;
 }) => {
   const locationHash = useSyncExternalStore(
     // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -26,15 +32,19 @@ const Form = ({
     message: "🌟 30k stargazers 🌟",
     font: "sans-serif",
     rounds: "2",
+    confetti_type: "confetti",
   };
 
   const methods = useForm({ defaultValues });
   const { register, handleSubmit, reset, watch, formState } = methods;
 
+  const rounds = Number.parseInt(watch("rounds"), 10);
+  const type = watch("confetti_type");
+
   useEffect(() => {
     const subscription = watch(onDataChanged);
 
-    onDataChanged(formState.defaultValues);
+    onDataChanged(formState.defaultValues, { name: "message" });
 
     return () => subscription.unsubscribe();
   }, [onDataChanged, watch, formState]);
@@ -43,44 +53,80 @@ const Form = ({
     <FormProvider {...methods}>
       <Persister />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h2 className="text-2xl">Control panel</h2>
-        <label className="block">
-          Your message
+        <h2 className="text-2xl pb-4">Control panel</h2>
+        <Label text="Your message">
           <input
             className="block rounded-lg w-full"
             type="text"
             {...register("message")}
           />
-        </label>
-        <label className="block">
-          Font
+        </Label>
+        <Label text="Font">
           <select className="block w-full" {...register("font")}>
             <option value="sans-serif">SanSerif</option>
             <option value="monospace">Monospace</option>
           </select>
-        </label>
+        </Label>
 
-        <label className="flex" htmlFor="rounds">
-          Confetti Rounds
-        </label>
-        <input
-          className="w-full"
-          id="rounds"
-          type="range"
-          step="1"
-          min="0"
-          max="4"
-          list="roundmarks"
-          {...register("rounds")}
-        />
+        <Label text="Confetti Rounds">
+          <input
+            className="w-full"
+            type="range"
+            step="1"
+            min="0"
+            max="4"
+            list="roundmarks"
+            {...register("rounds")}
+          />
+          <datalist id="roundmarks" className="flex justify-between">
+            <option value="0" label="🤨"></option>
+            <option value="1" label="🥱"></option>
+            <option value="2" label="🥳"></option>
+            <option value="3" label="🤩"></option>
+            <option value="4" label="🦄"></option>
+          </datalist>
+        </Label>
 
-        <datalist id="roundmarks" className="flex justify-between">
-          <option value="0" label="🤨"></option>
-          <option value="1" label="🥱"></option>
-          <option value="2" label="🥳"></option>
-          <option value="3" label="🤩"></option>
-          <option value="4" label="🦄"></option>
-        </datalist>
+        {rounds > 0 ? (
+          <>
+            <Label containerElement="div" text="Choose your type">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  className="mr-2"
+                  value="confetti"
+                  {...register("confetti_type")}
+                />
+                Confettis
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  className="mr-2"
+                  value="emoji"
+                  {...register("confetti_type")}
+                />
+                Emojis
+              </label>
+            </Label>
+            {type === "emoji" ? (
+              <Label containerElement="div" text="Pick your emojis">
+                <div className="flex">
+                  {EMOJIS.map((emoji, index) => (
+                    <label key={index} className="flex items-center pr-6">
+                      <input
+                        className="mr-2"
+                        type="checkbox"
+                        {...register(`emojis.${emoji}`)}
+                      />
+                      {emoji}
+                    </label>
+                  ))}
+                </div>
+              </Label>
+            ) : undefined}
+          </>
+        ) : undefined}
 
         <div className="my-4 flex justify-between">
           <Button variant="primary" type="submit">
