@@ -11,6 +11,7 @@ import { createMachine } from "xstate";
 import Canvas from "./../components/Canvas";
 import CanvasRecorder from "./../components/CanvasRecorder";
 import { HEIGHT, PADDING, WIDTH } from "./../components/const";
+import { repository } from "./../package.json";
 
 const DynamicForm = dynamic(() => import("../components/Form"), {
   ssr: false,
@@ -97,7 +98,7 @@ const Home: NextPage = () => {
     >({
       predictableActionArguments: true,
       id: "recorder",
-      initial: "downloading",
+      initial: "editing",
       context: {
         retries: 0,
       },
@@ -244,62 +245,9 @@ const Home: NextPage = () => {
         <Canvas ref={canvasRef4} />
 
         <CanvasRecorder sources={sources} ref={resultCanvasRef} />
-
-        {showOverlay && (
-          <div
-            onClick={() => {
-              send("DONE");
-            }}
-            className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center backdrop-blur-sm"
-          >
-            {isProcessing && (
-              <div className="w-1/2">
-                <h2 className="text-6xl text-center pb-2">
-                  <span className="inline-flex animate-bounce">...</span>
-                  Processing{" "}
-                  <span className="inline-flex animate-bounce">...</span>
-                </h2>
-                <div
-                  ref={logOutputRef}
-                  className="bg-black text-white font-mono h-96 w-full overflow-auto flex flex-col-reverse"
-                ></div>
-              </div>
-            )}
-
-            <div className="flex flex-col">
-              <video
-                className="rounded-lg w-full aspect-video bg-slate-400"
-                style={{
-                  display: isDownloading ? "block" : "none",
-                }}
-                loop
-                autoPlay
-                controls
-                ref={videoRef}
-              />
-              {isDownloading && (
-                <button
-                  className="bg-green-600 p-4 mt-1 rounded-lg text-white text-xl"
-                  onClick={() => {
-                    if (!videoRef.current) {
-                      return;
-                    }
-
-                    const a = document.createElement("a");
-                    a.href = videoRef.current.src;
-                    a.download = "recording.mp4";
-                    a.click();
-                  }}
-                >
-                  🦄 Download video
-                </button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="bg-blue-50 p-4">
+      <div className="bg-blue-50 p-4 relative">
         <DynamicForm
           onDataChanged={(data: any, { name }) => {
             if (!name) {
@@ -340,7 +288,70 @@ const Home: NextPage = () => {
             startRecording(Number.parseInt(data.rounds, 10), emojis);
           }}
         />
+        <div className="absolute bottom-0 right-0 left-0 text-center p-2 bg-gray-100">
+          Developed with ❤️ in Vienna -{" "}
+          <a
+            className="underline decoration-sky-500 semi-bold hover:text-sky-500"
+            href={repository}
+            rel="noreferrer"
+            target="_blank"
+          >
+            GitHub
+          </a>
+        </div>
       </div>
+      {showOverlay && (
+        <div
+          onClick={() => {
+            send("DONE");
+          }}
+          className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center backdrop-blur-sm"
+        >
+          {isProcessing && (
+            <div className="w-1/2">
+              <h2 className="text-6xl text-center pb-2">
+                <span className="inline-flex animate-bounce">...</span>
+                Processing{" "}
+                <span className="inline-flex animate-bounce">...</span>
+              </h2>
+              <div
+                ref={logOutputRef}
+                className="bg-black text-white font-mono h-96 w-full overflow-auto flex flex-col-reverse"
+              ></div>
+            </div>
+          )}
+
+          <div className="flex flex-col">
+            <video
+              className="rounded-lg w-full aspect-video bg-slate-400"
+              style={{
+                display: isDownloading ? "block" : "none",
+              }}
+              loop
+              autoPlay
+              controls
+              ref={videoRef}
+            />
+            {isDownloading && (
+              <button
+                className="bg-green-600 p-4 mt-1 rounded-lg text-white text-xl"
+                onClick={() => {
+                  if (!videoRef.current) {
+                    return;
+                  }
+
+                  const a = document.createElement("a");
+                  a.href = videoRef.current.src;
+                  a.download = "recording.mp4";
+                  a.click();
+                }}
+              >
+                🦄 Download video
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
