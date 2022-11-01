@@ -1,5 +1,6 @@
 {
   "name": "celebration-generator",
+  "repository": "https://github.com/davincho/celebration-generator",
   "version": "0.1.0",
   "private": true,
   "scripts": {
