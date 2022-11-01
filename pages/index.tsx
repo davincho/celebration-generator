@@ -59,7 +59,7 @@ const Home: NextPage = () => {
 
   const fireConfetti = (round = 0, emojis?: string[]) => {
     const targetCanvas = sources[round].current;
-    console.log("targetCanvas", targetCanvas, sources, round);
+
     if (targetCanvas) {
       const jsConfetti = new JSConfetti({
         canvas: targetCanvas,
