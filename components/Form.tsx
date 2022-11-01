@@ -8,7 +8,7 @@ import Button from "./../components/Button";
 import Label from "./../components/Label";
 import Persister from "./../components/Persister";
 
-const EMOJIS = ["🦄", "🐸", "🌟", "🤩"];
+const EMOJIS = ["🦄", "🐸", "🌟", "🤩", "⚡️", "💥", "✨"];
 
 const Form = ({
   onSubmit,
@@ -111,9 +111,9 @@ const Form = ({
             </Label>
             {type === "emoji" ? (
               <Label containerElement="div" text="Pick your emojis">
-                <div className="flex">
+                <div className="flex flex-wrap">
                   {EMOJIS.map((emoji, index) => (
-                    <label key={index} className="flex items-center pr-6">
+                    <label key={index} className="flex items-center pr-7">
                       <input
                         className="mr-2"
                         type="checkbox"

@@ -19,7 +19,10 @@ const DynamicForm = dynamic(() => import("../components/Form"), {
 interface Context {}
 
 const Home: NextPage = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef1 = useRef<HTMLCanvasElement>(null);
+  const canvasRef2 = useRef<HTMLCanvasElement>(null);
+  const canvasRef3 = useRef<HTMLCanvasElement>(null);
+  const canvasRef4 = useRef<HTMLCanvasElement>(null);
   const textCanvasRef = useRef<HTMLCanvasElement>(null);
   const resultCanvasRef = useRef<HTMLCanvasElement>(null);
   const logOutputRef = useRef<HTMLDivElement>(null);
@@ -54,11 +57,12 @@ const Home: NextPage = () => {
     }
   };
 
-  // ["⚡️", "💥", "✨"]
-  const fireConfetti = (emojis?: string[]) => {
-    if (canvasRef.current) {
+  const fireConfetti = (round = 0, emojis?: string[]) => {
+    const targetCanvas = sources[round].current;
+    console.log("targetCanvas", targetCanvas, sources, round);
+    if (targetCanvas) {
       const jsConfetti = new JSConfetti({
-        canvas: canvasRef.current,
+        canvas: targetCanvas,
       });
 
       jsConfetti.addConfetti({
@@ -90,57 +94,48 @@ const Home: NextPage = () => {
       | { value: "recording"; context: Context }
       | { value: "processing"; context: Context }
       | { value: "downloading"; context: Context }
-    >(
-      {
-        predictableActionArguments: true,
-        id: "recorder",
-        initial: "editing",
-        context: {
-          retries: 0,
+    >({
+      predictableActionArguments: true,
+      id: "recorder",
+      initial: "editing",
+      context: {
+        retries: 0,
+      },
+      states: {
+        editing: {
+          on: {
+            RESET: "editing",
+            RECORD: {
+              target: "recording",
+            },
+          },
         },
-        states: {
-          editing: {
-            on: {
-              RESET: "editing",
-              RECORD: {
-                target: "recording",
-              },
-            },
+        recording: {
+          after: {
+            // after 1 second, transition to yellow
+            1000: { target: "recording" },
           },
-          recording: {
-            after: {
-              // after 1 second, transition to yellow
-              1000: { target: "recording" },
-            },
-            on: {
-              FINISH_RECORDING: "processing",
-            },
+          on: {
+            FINISH_RECORDING: "processing",
           },
-          processing: {
-            on: {
-              FINISH_PROCESSING: "downloading",
-            },
+        },
+        processing: {
+          on: {
+            FINISH_PROCESSING: "downloading",
           },
-          downloading: {
-            on: {
-              DONE: "editing",
-            },
+        },
+        downloading: {
+          on: {
+            DONE: "editing",
           },
         },
       },
-      {
-        actions: {
-          fire: () => {
-            fireConfetti();
-          },
-        },
-      }
-    )
+    })
   );
 
   const sources = useMemo(
-    () => [textCanvasRef, canvasRef],
-    [textCanvasRef, canvasRef]
+    () => [textCanvasRef, canvasRef1, canvasRef2, canvasRef3, canvasRef4],
+    [textCanvasRef, canvasRef1, canvasRef2, canvasRef3, canvasRef4]
   );
 
   const startRecording = async (rounds: number) => {
@@ -176,9 +171,12 @@ const Home: NextPage = () => {
     });
     mediaRecorder.start();
 
+    const clipLength = 4000;
+    const interval = clipLength / rounds;
+
     for (let i = 0; i < rounds; i++) {
-      fireConfetti();
-      await waitSomeTime(1000);
+      fireConfetti(i + 1);
+      await waitSomeTime(interval);
     }
 
     send("FINISH_RECORDING");
@@ -238,8 +236,11 @@ const Home: NextPage = () => {
           </div>
         ) : undefined}
 
-        <Canvas ref={canvasRef} />
         <Canvas ref={textCanvasRef} />
+        <Canvas ref={canvasRef1} />
+        <Canvas ref={canvasRef2} />
+        <Canvas ref={canvasRef3} />
+        <Canvas ref={canvasRef4} />
 
         <CanvasRecorder sources={sources} ref={resultCanvasRef} />
 
@@ -297,7 +298,7 @@ const Home: NextPage = () => {
 
       <div className="bg-blue-50 p-4">
         <DynamicForm
-          onDataChanged={(data: any, { name, type }) => {
+          onDataChanged={(data: any, { name }) => {
             if (!name) {
               return;
             }
@@ -318,15 +319,14 @@ const Home: NextPage = () => {
             }
 
             if (data.confetti_type === "confetti") {
-              fireConfetti();
+              fireConfetti(0);
             } else {
-              // Collect emoti
-
+              // Collect emojis
               const emojis = Object.keys(data.emojis ?? {}).filter(
                 (key) => data.emojis[key]
               );
 
-              fireConfetti(emojis);
+              fireConfetti(1, emojis);
             }
           }}
           onSubmit={async (data: any) => {
@@ -335,6 +335,20 @@ const Home: NextPage = () => {
             startRecording(Number.parseInt(data.rounds, 10));
           }}
         />
+        <button
+          onClick={() => {
+            fireConfetti(1);
+          }}
+        >
+          Draw on canvas 0
+        </button>
+        <button
+          onClick={() => {
+            fireConfetti(2);
+          }}
+        >
+          Draw on canvas 1
+        </button>
       </div>
     </div>
   );

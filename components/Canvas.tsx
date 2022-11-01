@@ -7,8 +7,8 @@ const Canvas = React.forwardRef<HTMLCanvasElement>((_, ref) => {
     <canvas
       style={{
         position: "absolute",
-        top: -99_999,
-        left: -99_999,
+        top: -1000,
+        left: -1000,
         height: HEIGHT,
         width: WIDTH,
       }}
