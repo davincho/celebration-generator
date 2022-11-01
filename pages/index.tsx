@@ -97,7 +97,7 @@ const Home: NextPage = () => {
     >({
       predictableActionArguments: true,
       id: "recorder",
-      initial: "editing",
+      initial: "downloading",
       context: {
         retries: 0,
       },
@@ -253,22 +253,24 @@ const Home: NextPage = () => {
             className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center backdrop-blur-sm"
           >
             {isProcessing && (
-              <>
-                <h2 className="text-6xl animate-bounce">... processing ...</h2>
+              <div className="w-1/2">
+                <h2 className="text-6xl text-center pb-2">
+                  <span className="inline-flex animate-bounce">...</span>
+                  Processing{" "}
+                  <span className="inline-flex animate-bounce">...</span>
+                </h2>
                 <div
                   ref={logOutputRef}
-                  className="bg-black text-white font-mono h-96 w-32 overflow-auto"
+                  className="bg-black text-white font-mono h-96 w-full overflow-auto flex flex-col-reverse"
                 ></div>
-              </>
+              </div>
             )}
 
             <div className="flex flex-col">
               <video
-                className="rounded-lg"
+                className="rounded-lg w-full aspect-video bg-slate-400"
                 style={{
                   display: isDownloading ? "block" : "none",
-                  height: HEIGHT,
-                  width: WIDTH,
                 }}
                 loop
                 autoPlay

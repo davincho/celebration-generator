@@ -79,11 +79,11 @@ const Form = ({
             {...register("rounds")}
           />
           <datalist id="roundmarks" className="flex justify-between">
-            <option value="0" label="🤨"></option>
-            <option value="1" label="🥱"></option>
-            <option value="2" label="🥳"></option>
-            <option value="3" label="🤩"></option>
-            <option value="4" label="🦄"></option>
+            <option value="0" label="🤨 (0)"></option>
+            <option value="1" label="🥱 (1)"></option>
+            <option value="2" label="🥳 (2)"></option>
+            <option value="3" label="🤩 (3)"></option>
+            <option value="4" label="🦄 (4)"></option>
           </datalist>
         </Label>
 
